@@ -1,6 +1,7 @@
 import time, datetime
 
 import click
+from tabulate import tabulate
 
 from .data import rewrite_data, get_tags, get_active_session, get_sessions, read_data
 from .views import format_work_time_info
@@ -17,7 +18,8 @@ def sort_sessions_by_date_range(sessions: list, dr: str):
         end_date = datetime.date.today()
     elif dr == 'all':
         return sessions
-   
+
+    dates_range = f'{start_date} - {end_date}'
     new_sessions: list[dict] = []
 
     for s in sessions:
@@ -26,6 +28,49 @@ def sort_sessions_by_date_range(sessions: list, dr: str):
             new_sessions.append(s)
 
     return new_sessions
+
+def create_matrix(sessions: list):
+
+    data = [
+        ['tags', 'start', 'end', 'breaks', 'total time']
+    ]
+
+    for s in sessions:
+        total_time = s.get('total time')
+        hours = total_time.get('hours')
+        minutes = total_time.get('minutes')
+        seconds = total_time.get('seconds')
+        work_time_info = format_work_time_info(hours, minutes, seconds)
+
+        data.append([
+                ''.join(f'{tag}, '[:-2] for tag in s.get('tags')),
+                s.get('start').get('date') + ' ' + s.get('start').get('time')[:-7],
+                s.get('end').get('date') + ' ' + s.get('end').get('time')[:-7],
+                s.get('breaks'),
+                work_time_info
+        ])
+    
+    return data
+
+
+@click.command('sessions')
+@click.option('--dr', default='all')
+def check_sessions(dr: str):
+
+    all_sessions = get_sessions()
+
+    if all_sessions == []:
+        click.echo('🦇 there are no sessions yet')
+        exit(1)
+
+    sessions = sort_sessions_by_date_range(all_sessions, dr)
+
+    if sessions == []:
+        click.echo(f'🦇 no sessions on this range: {dr}')
+        exit(1)
+
+    data = create_matrix(sessions)
+    click.echo(tabulate(data, headers='firstrow', tablefmt='grid'))
 
 
 @click.command('begin')

@@ -1,6 +1,6 @@
 [project]
 name = "raww"
-version = "0.5.1"
+version = "0.6.0"
 description = "A CLI tool for tracking study and work time🦇"
 
 authors = [
@@ -14,7 +14,8 @@ packages = [
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "click (>=8.2.1,<9.0.0)"
+    "click (>=8.2.1,<9.0.0)",
+    "tabulate (>=0.9.0,<0.10.0)"
 ]
 
 exclude = [
