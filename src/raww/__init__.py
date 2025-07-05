@@ -1,3 +1,6 @@
+from pathlib import Path
+import json
+
 import click
 
 from .tags import tag
@@ -6,8 +9,21 @@ from .sessions import begin_session, finish_session, pause_session, check_sessio
 
 @click.group()
 @click.version_option(package_name='raww')
-def raw():
-    ...
+@click.pass_context
+def raw(ctx: click.Context):
+    raww_datafile = Path.home() / '.rawdata.json'
+
+    if not raww_datafile.exists():
+        raww_datafile.touch()
+        with open(raww_datafile, 'w') as file:
+            # filling datafile with basic stuff
+            json.dump({
+                'tags': [],
+                'active_session': {},
+                'sessions': [],
+            }, file, indent=4)
+
+    ctx.obj = {'raww_datafile': raww_datafile}
 
 
 ## commands ##

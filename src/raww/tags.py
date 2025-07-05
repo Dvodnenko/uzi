@@ -5,18 +5,21 @@ from .data import get_tags, update_datafile
 
 @click.command('tags')
 @click.option('--new')
+@click.pass_context
 def tag(
+    ctx: click.Context,
     new: str
 ):
 
-    mytags = get_tags()
+    raww_datafile = ctx.obj['raww_datafile']
+    mytags = get_tags(raww_datafile)
 
     if new:
         if new in mytags:
             click.echo(f'🦇 tag {new} already exists')
             exit(1)
         else:
-            update_datafile(tags=[*mytags, new])
+            update_datafile(raww_datafile, tags=[*mytags, new])
             click.echo(f'🦇 new tag - {new}')
             exit(0)
     else:
