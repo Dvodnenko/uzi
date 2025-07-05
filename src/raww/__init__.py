@@ -5,7 +5,7 @@ from .sessions import begin_session, finish_session, pause_session, check_sessio
 
 
 @click.group()
-@click.version_option('0.7.3', package_name='raww')
+@click.version_option(package_name='raww')
 def raw():
     ...
 
