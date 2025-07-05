@@ -1,7 +1,5 @@
-import json, os
+import json
 from pathlib import Path
-
-from .views import ask
 
 
 DATA_PATH = Path.home() / '.rawdata.json'
@@ -15,11 +13,6 @@ def read_data() -> dict:
 
     return data
 
-def get_field(data_dict: dict, field: str):
-    value = data_dict.get(field)
-
-    return value
-
 def rewrite_data(new_data: dict) -> None:
     with open(DATA_PATH, 'w', encoding='utf-8') as file:
         json.dump(new_data, file, ensure_ascii=False, indent=4)
@@ -31,21 +24,21 @@ def rewrite_data(new_data: dict) -> None:
 
 def get_tags() -> list:
     data = read_data()
-    tags: list = get_field(data, 'tags')
+    tags: list = data.get('tags', [])
 
-    return tags if tags else []
+    return tags
 
 def get_sessions() -> list[dict]:
     data = read_data()
-    sessions: list = get_field(data, 'sessions')
+    sessions: list = data.get('sessions', [])
 
-    return sessions if sessions else []
+    return sessions
 
 def get_active_session() -> dict:
     data = read_data()
-    active_session = get_field(data, 'active_session')
+    active_session = data.get('active_session', {})
 
-    return active_session if active_session else {}
+    return active_session
 
 
 def update_datafile(tags: list = get_tags(), 
