@@ -1,23 +1,23 @@
 import pickle
-from datetime import datetime
 from pathlib import Path
 
 from .session import Session
+from .time import TimePoint
 
 
 class ActiveSession:
     def __init__(
             self, 
             tags: list[str], 
-            start_datetime: datetime,
+            start: TimePoint,
             breaks: int
     ):
         self.tags = tags
-        self.start_datetime = start_datetime
+        self.start = start
         self.breaks = breaks
     @staticmethod
     def _begin(tags: list, path: Path): # !underhood method!
-        active_session = ActiveSession(tags, datetime.now(), 0)
+        active_session = ActiveSession(tags, TimePoint.now(), 0)
         with open(path, 'wb') as file:
             pickle.dump(active_session, file)
         return active_session
@@ -29,7 +29,7 @@ class ActiveSession:
             pickle.dump(None, file)
         return Session(
             active_session.tags, 
-            active_session.start_datetime, 
-            datetime.now(),
+            active_session.start, 
+            TimePoint.now(),
             active_session.breaks
         )
