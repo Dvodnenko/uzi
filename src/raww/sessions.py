@@ -3,11 +3,10 @@ import time, datetime
 import click
 from tabulate import tabulate
 
-from .data import get_tags, get_active_session, get_sessions, update_datafile
-from .views import format_work_time_info
+from .data import Data, Session
 
 
-def sort_sessions_by_date_range(sessions: list, dr: str):
+def sort_sessions_by_date_range(sessions: list[Session], dr: str):
 
     if '..' in dr:
         dates = dr.split('..')
@@ -18,36 +17,29 @@ def sort_sessions_by_date_range(sessions: list, dr: str):
         end_date = datetime.date.today()
     elif dr == 'all':
         return sessions
-
-    dates_range = f'{start_date} - {end_date}'
-    new_sessions: list[dict] = []
+    
+    new_sessions: list[Session] = []
 
     for s in sessions:
-        s_start = datetime.date.fromisoformat(s.get('start').get('date'))
+        s_start = s.start.date
         if (s_start >= start_date) and (s_start <= end_date):
             new_sessions.append(s)
 
     return new_sessions
 
-def create_matrix(sessions: list):
+def create_matrix(sessions: list[Session]):
 
     data = [
         ['tags', 'start', 'end', 'breaks', 'total time']
     ]
 
     for s in sessions:
-        total_time = s.get('total time')
-        hours = total_time.get('hours')
-        minutes = total_time.get('minutes')
-        seconds = total_time.get('seconds')
-        work_time_info = format_work_time_info(hours, minutes, seconds)
-
         data.append([
-                ''.join(f'{tag}, ' for tag in s.get('tags'))[:-2],
-                s.get('start').get('date') + ' ' + s.get('start').get('time')[:-7],
-                s.get('end').get('date') + ' ' + s.get('end').get('time')[:-7],
-                s.get('breaks'),
-                work_time_info
+                ''.join(f'{tag}, ' for tag in s.tags)[:-2],
+                str(s.start.date) + ' ' + str(s.start.time),
+                str(s.end.date) + ' ' + str(s.end.time),
+                s.breaks,
+                s.total.infostr
         ])
     
     return data
@@ -74,8 +66,9 @@ def check_sessions(ctx: click.Context, dr: str, lxd: int):
         else:
             dr = f'{datetime.date.today() - datetime.timedelta(days=(lxd-1))}..{datetime.date.today()}'
 
-    raww_datafile = ctx.obj['raww_datafile']
-    all_sessions = get_sessions(raww_datafile)
+    raww_directory = ctx.obj['raww_directory']
+    data = Data(raww_directory)
+    all_sessions = data.sessions
 
     if all_sessions == []:
         click.echo('🦇 there are no sessions yet')
@@ -94,10 +87,11 @@ def check_sessions(ctx: click.Context, dr: str, lxd: int):
 @click.command('begin')
 @click.argument('tags', nargs=-1)
 @click.pass_context
-def begin_session(ctx: click.Context, tags: tuple):
+def begin_session(ctx: click.Context, tags: list[str]):
 
-    raww_datafile = ctx.obj['raww_datafile']
-    active_session = get_active_session(raww_datafile)
+    raww_directory = ctx.obj['raww_directory']
+    data = Data(raww_directory)
+    active_session = data.active_session
 
     if active_session:
         click.echo('🦇 there is already an active session')
@@ -107,21 +101,14 @@ def begin_session(ctx: click.Context, tags: tuple):
         click.echo('🦇 at least one tag is required to begin a new session')
         exit(1)
     
-    mytags = get_tags(raww_datafile)
+    mytags = data.tags
 
     for tag in tags:
         if tag not in mytags:
             click.echo(f'🦇 tag {tag} does not exist yet')
             exit(1)
 
-    start = datetime.datetime.now()
-    update_datafile(
-        raww_datafile,
-        active_session={
-            'tags': [*tags],
-            'start': f'{start}',
-            'breaks': 0
-        })
+    data.begin_session(tags)
 
     click.echo('🦇 session started')
     click.echo()
@@ -137,60 +124,21 @@ def begin_session(ctx: click.Context, tags: tuple):
 @click.pass_context
 def finish_session(ctx: click.Context):
 
-    raww_datafile = ctx.obj['raww_datafile']
-    active_session = get_active_session(raww_datafile)
+    raww_directory = ctx.obj['raww_directory']
+    data = Data(raww_directory)
+    active_session = data.active_session
 
     if not active_session:
         click.echo('🦇 there is no active session yet')
         exit(1)
 
-    mysessions = get_sessions(raww_datafile)
-
-    # start & end info
-    start_datetime: datetime = datetime.datetime.fromisoformat(active_session.get('start'))
-    start_date = datetime.date(start_datetime.year, start_datetime.month, start_datetime.day)
-    start_time = datetime.time(start_datetime.hour, start_datetime.minute, start_datetime.second, start_datetime.microsecond)
-
-    end_datetime = datetime.datetime.now()
-    end_date = datetime.date(end_datetime.year, end_datetime.month, end_datetime.day)
-    end_time = datetime.time(end_datetime.hour, end_datetime.minute, end_datetime.second, end_datetime.microsecond)
-    breaks: int = active_session.get('breaks')
-    timedelta = ((end_datetime - start_datetime).seconds) - breaks
-    hours = timedelta // 3600
-    timedelta -= hours*3600
-    minutes = timedelta // 60
-    timedelta -= minutes * 60
-    seconds = timedelta
-
-    tags = [*(active_session.get('tags'))]
-
-    total_time = {
-        'hours': hours,
-        'minutes': minutes,
-        'seconds': seconds
-    }
-
-    update_datafile(
-        raww_datafile,
-        active_session={},
-        sessions=[*mysessions, {
-        'tags': [*tags],
-        'start': {
-            'date': f'{start_date}',
-            'time': f'{start_time}'
-        },
-        'end': {
-            'date': f'{end_date}',
-            'time': f'{end_time}'
-        },
-        'breaks': breaks,
-        'total time': total_time
-    }])
+    session = data.finish_session()
 
     click.echo('the session has ended 🦇')
     click.echo()
 
-    work_time_info = format_work_time_info(hours=hours, minutes=minutes, seconds=seconds)
+    tags = session.tags
+    work_time_info = session.total.infostr
     
     if len(tags) == 1:
         click.echo(f'you did {tags[0]} for {work_time_info}')
@@ -203,16 +151,18 @@ def finish_session(ctx: click.Context):
 @click.command('pause')
 @click.pass_context
 def pause_session(ctx: click.Context):
-    raww_datafile = ctx.obj['raww_datafile']
-    active_session = get_active_session(raww_datafile)
+
+    raww_directory = ctx.obj['raww_directory']
+    data = Data(raww_directory)
+    active_session = data.active_session
+
     if not active_session:
         click.echo('🦇 there is no active session yet')
         exit(1)
-    breaks: int = active_session.get('breaks')
+
     click.echo('🦇 the session is paused')
     while True:
         time.sleep(1)
-        breaks += 1
 
-        active_session['breaks'] = breaks
-        update_datafile(raww_datafile, active_session=active_session)
+        active_session.breaks = active_session.breaks + 1
+        data.active_session = active_session

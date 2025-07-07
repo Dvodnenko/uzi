@@ -1,6 +1,6 @@
 import click
 
-from .data import get_tags, update_datafile
+from .data import Data
 
 
 @click.command('tags')
@@ -11,15 +11,16 @@ def tag(
     new: str
 ):
 
-    raww_datafile = ctx.obj['raww_datafile']
-    mytags = get_tags(raww_datafile)
+    raww_directory = ctx.obj['raww_directory']
+    data = Data(raww_directory)
+    mytags = data.tags
 
     if new:
         if new in mytags:
             click.echo(f'🦇 tag {new} already exists')
             exit(1)
         else:
-            update_datafile(raww_datafile, tags=[*mytags, new])
+            data.tags = [*data.tags, new]
             click.echo(f'🦇 new tag - {new}')
             exit(0)
     else:
