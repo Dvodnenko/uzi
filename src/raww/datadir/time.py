@@ -1,6 +1,6 @@
 from datetime import date, time, datetime
 
-from src.raww.views import format_work_time_info
+from ..views import format_work_time_info
 
 
 class TotalWorkTime:

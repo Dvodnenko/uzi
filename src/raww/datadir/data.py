@@ -3,7 +3,7 @@ from pathlib import Path
 
 from .active_session import ActiveSession
 from .session import Session
-from src.raww.views import create_file_if_not_exists
+from ..views import create_file_if_not_exists
 
 
 class Data:
