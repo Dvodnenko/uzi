@@ -12,6 +12,17 @@ class TimeDelta:
     @property
     def infostr(self) -> str:
         return format_work_time_info(self.hours, self.minutes, self.seconds)
+    
+    def __add__(self, other):
+        self_in_seconds = self.hours*3600 + self.minutes*60 + self.seconds
+        other_in_seconds: int = other.hours*3600 + other.minutes*60 + other.seconds
+        summa = self_in_seconds + other_in_seconds
+        hours = summa // 3600
+        summa -= hours*3600
+        minutes = summa // 60
+        summa -= minutes * 60
+        seconds = summa
+        return TimeDelta(hours, minutes, seconds)
 
 
 class TimePoint:
