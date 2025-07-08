@@ -1,7 +1,6 @@
 import time, datetime
 
 import click
-from tabulate import tabulate
 
 from .data import Data, Session
 
@@ -26,23 +25,6 @@ def sort_sessions_by_date_range(sessions: list[Session], dr: str):
             new_sessions.append(s)
 
     return new_sessions
-
-def create_matrix(sessions: list[Session]):
-
-    data = [
-        ['tags', 'start', 'end', 'breaks', 'total time']
-    ]
-
-    for s in sessions:
-        data.append([
-                ''.join(f'{tag}, ' for tag in s.tags)[:-2],
-                str(s.start.date) + ' ' + str(s.start.time),
-                str(s.end.date) + ' ' + str(s.end.time),
-                s.breaks,
-                s.total.infostr
-        ])
-    
-    return data
 
 
 @click.command('sessions')
@@ -80,8 +62,34 @@ def check_sessions(ctx: click.Context, dr: str, lxd: int):
         click.echo(f'🦇 no sessions on this range: {dr}')
         exit(1)
 
-    data = create_matrix(sessions)
-    click.echo(tabulate(data, headers='firstrow', tablefmt='grid'))
+    text = []
+    for session in sessions:
+
+        date = click.style(f'Date: {session.start.date.strftime('%a')} \
+{session.start.date.strftime('%b')} {session.start.date.day} {session.start.date.year}')
+        starttime = click.style(f'{session.start.time}'[:-7], fg='magenta')
+        endtime = click.style(f'{session.end.time}'[:-7], fg='magenta')
+        text.append(f'{date} {starttime} - {endtime}\n')
+
+        text.append(f'Breaks: {session.breaks}s\n')
+        twt = click.style(f'{session.total.infostr}', fg='magenta')
+        text.append(f'Total work time: {twt}\n\n')
+
+        if session.tags == []:
+            tagsstr = 'there were no tags in the session'
+        else:
+            tagsstr = 'tags: '
+            for tag in session.tags:
+                tagsstr += click.style(f' {tag} ', bg='magenta', fg='black')
+                tagsstr += ' '
+        text.append(f'{tagsstr}\n')
+
+        text.append(f'message: {session.msg}\n' if session.msg != '' else 'there was no message in the session\n')
+        text.append(f'summary: {session.summary}\n' if session.summary != '' else 'there was no summary in the session\n')
+
+        text.append('\n\n\n')
+    click.echo_via_pager(text)
+        
 
 @click.command('begin')
 @click.option('--msg', '-m', default='')
