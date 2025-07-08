@@ -5,11 +5,13 @@ class Session:
     def __init__(
             self, 
             tags: list[str], 
+            msg: str,
             start: TimePoint, 
             end: TimePoint, 
             breaks: int = 0
     ):
         self.tags = tags
+        self.msg = msg
         self.start = start
         self.end = end
         self.breaks = breaks

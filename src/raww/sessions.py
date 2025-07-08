@@ -83,22 +83,21 @@ def check_sessions(ctx: click.Context, dr: str, lxd: int):
     data = create_matrix(sessions)
     click.echo(tabulate(data, headers='firstrow', tablefmt='grid'))
 
-
 @click.command('begin')
-@click.argument('tags', nargs=-1)
+@click.option('--msg', '-m', default='')
+@click.option('--tags', '-t', type=str, help='comma-separated tags', default='')
 @click.pass_context
-def begin_session(ctx: click.Context, tags: list[str]):
+def begin_session(ctx: click.Context, tags: str, msg: str):
+    if tags == '':
+        tags = []
+    else:
+        tags = tags.split(',')
 
     raww_directory = ctx.obj['raww_directory']
     data = Data(raww_directory)
-    active_session = data.active_session
 
-    if active_session:
+    if data.active_session:
         click.echo('🦇 there is already an active session')
-        exit(1)
-
-    if tags == ():
-        click.echo('🦇 at least one tag is required to begin a new session')
         exit(1)
     
     mytags = data.tags
@@ -108,12 +107,16 @@ def begin_session(ctx: click.Context, tags: list[str]):
             click.echo(f'🦇 tag {tag} does not exist yet')
             exit(1)
 
-    data.begin_session(tags)
+    active_session = data.begin_session(tags, msg)
 
     click.echo('🦇 session started')
     click.echo()
+    click.echo(active_session.msg if active_session.msg != '' else 'no message provided')
+    click.echo()
 
-    if len(tags) == 1:
+    if tags == []:
+        click.echo('no tags provided')
+    elif len(tags) == 1:
         click.echo(f'tag - {tags[0]}')
     else:
         click.echo(f'tags: * {tags[0]}')
@@ -136,17 +139,24 @@ def finish_session(ctx: click.Context):
 
     click.echo('the session has ended 🦇')
     click.echo()
+    if session.msg == '':
+        click.echo('there was no message in the session')
+    else:
+        click.echo(session.msg)
+        click.echo()
 
     tags = session.tags
     work_time_info = session.total.infostr
     
-    if len(tags) == 1:
-        click.echo(f'you did {tags[0]} for {work_time_info}')
+    if tags == []:
+        click.echo('there were no tags in the session')
+    elif len(tags) == 1:
+        click.echo(f'tags: {tags[0]}')
     else:
-        click.echo(f'you did: * {tags[0]}')
+        click.echo(f'tags: * {tags[0]}')
         for tag in tags[1:]:
-            click.echo(f'         * {tag}')
-            click.echo(f'for {work_time_info}')
+            click.echo(f'      * {tag}')
+    click.echo(f'you worked for {work_time_info}')
 
 @click.command('pause')
 @click.pass_context
