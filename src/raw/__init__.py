@@ -27,12 +27,12 @@ def config():
 def create():
     config = load_config()
     save_config(config)
-    click.echo("🦇 configuration created")
+    click.echo("🦇 Configuration created")
 
 @config.command()
 def show():
     if not CONFIG_FILE.exists():
-        click.echo("🦇 no configuration found")
+        click.echo("🦇 No configuration found")
         exit(1)
     
     config = load_config()

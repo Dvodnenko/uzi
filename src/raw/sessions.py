@@ -34,16 +34,16 @@ def sort_sessions_by_date_range(sessions: list[Session], dr: str):
 def check_sessions(ctx: click.Context, dr: str, lxd: int):
 
     if dr is None and lxd is None:
-        click.echo("🦇 you should provide --dr or --lxd option")
+        click.echo("🦇 You should provide --dr or --lxd option")
         exit(1)
 
     if dr != None and lxd != None:
-        click.echo("🦇 you cannot provide both --dr and --lxd options")
+        click.echo("🦇 You cannot provide both --dr and --lxd options")
         exit(1)
 
     if lxd != None:
         if lxd <= 0:
-            click.echo(f"🦇 you cannot see info about 'last {lxd} days'. lxd should be grater than 0")
+            click.echo(f"🦇 You cannot see info about 'last {lxd} days'. lxd should be grater than 0")
             exit(1)
         else:
             dr = f"{datetime.date.today() - datetime.timedelta(days=(lxd-1))}..{datetime.date.today()}"
@@ -53,13 +53,13 @@ def check_sessions(ctx: click.Context, dr: str, lxd: int):
     all_sessions = data.sessions
 
     if all_sessions == []:
-        click.echo("🦇 there are no sessions yet")
+        click.echo("🦇 There are no sessions yet")
         exit(1)
 
     sessions = sort_sessions_by_date_range(all_sessions, dr)
 
     if sessions == []:
-        click.echo(f"🦇 no sessions on this range: {dr}")
+        click.echo(f"🦇 No sessions on this range: {dr}")
         exit(1)
 
     text = []
@@ -76,7 +76,7 @@ def check_sessions(ctx: click.Context, dr: str, lxd: int):
         text.append(f"Total work time: {twt}\n\n")
 
         if session.tags == []:
-            tagsstr = "there were no tags in the session"
+            tagsstr = "There were no tags in the session"
         else:
             tagsstr = "tags: "
             for tag in session.tags:
@@ -84,8 +84,8 @@ def check_sessions(ctx: click.Context, dr: str, lxd: int):
                 tagsstr += " "
         text.append(f"{tagsstr}\n")
 
-        text.append(f"message: {session.msg}\n" if session.msg != "" else "there was no message in the session\n")
-        text.append(f"summary: {session.summary}\n" if session.summary != "" else "there was no summary in the session\n")
+        text.append(f"Message: {session.msg}\n" if session.msg != "" else "There was no message in the session\n")
+        text.append(f"Summary: {session.summary}\n" if session.summary != "" else "There was no summary in the session\n")
 
         text.append("\n\n\n")
     click.echo_via_pager(text)
@@ -105,29 +105,29 @@ def begin_session(ctx: click.Context, tags: str, msg: str):
     data = Data(raw_directory)
 
     if data.active_session:
-        click.echo("🦇 there is already an active session")
+        click.echo("🦇 There is already an active session")
         exit(1)
     
     mytags = data.tags
 
     for tag in tags:
         if tag not in mytags:
-            click.echo(f"🦇 tag {tag} does not exist yet")
+            click.echo(f"🦇 Tag {tag} does not exist yet")
             exit(1)
 
     active_session = data.begin_session(tags, msg)
 
-    click.echo("🦇 session started")
+    click.echo("🦇 Session started")
     click.echo()
-    click.echo(active_session.msg if active_session.msg != "" else "no message provided")
+    click.echo(active_session.msg if active_session.msg != "" else "No message provided")
     click.echo()
 
     if tags == []:
-        click.echo("no tags provided")
+        click.echo("No tags provided")
     elif len(tags) == 1:
-        click.echo(f"tag - {tags[0]}")
+        click.echo(f"Tag - {tags[0]}")
     else:
-        click.echo(f"tags: * {tags[0]}")
+        click.echo(f"Tags: * {tags[0]}")
         for tag in tags[1:]:
             click.echo(f"      * {tag}")
 
@@ -140,37 +140,37 @@ def finish_session(ctx: click.Context):
     active_session = data.active_session
 
     if not active_session:
-        click.echo("🦇 there is no active session yet")
+        click.echo("🦇 There is no active session yet")
         exit(1)
 
-    summary = input("session summary: ")
+    summary = input("Session summary: ")
     session = data.finish_session(summary=summary)
 
-    click.echo("the session has ended 🦇")
+    click.echo("The session has ended 🦇")
     click.echo()
     if session.msg == "":
-        click.echo("there was no message in the session")
+        click.echo("There was no message in the session")
     else:
-        click.echo(f"message: {session.msg}")
+        click.echo(f"Message: {session.msg}")
         click.echo()
     if session.summary == "":
-        click.echo("there is no summary in the session")
+        click.echo("There is no summary in the session")
     else:
-        click.echo(f"summary: {session.summary}")
+        click.echo(f"Summary: {session.summary}")
         click.echo()
 
     tags = session.tags
     work_time_info = session.total.infostr
     
     if tags == []:
-        click.echo("there were no tags in the session")
+        click.echo("There were no tags in the session")
     elif len(tags) == 1:
-        click.echo(f"tags: {tags[0]}")
+        click.echo(f"Tags: {tags[0]}")
     else:
-        click.echo(f"tags: * {tags[0]}")
+        click.echo(f"Tags: * {tags[0]}")
         for tag in tags[1:]:
             click.echo(f"      * {tag}")
-    click.echo(f"you worked for {work_time_info}")
+    click.echo(f"You worked for {work_time_info}")
 
 @click.command("pause")
 @click.pass_context
@@ -181,10 +181,10 @@ def pause_session(ctx: click.Context):
     active_session = data.active_session
 
     if not active_session:
-        click.echo("🦇 there is no active session yet")
+        click.echo("🦇 There is no active session yet")
         exit(1)
 
-    click.echo("🦇 the session is paused")
+    click.echo("🦇 The session is paused")
     while True:
         time.sleep(1)
 

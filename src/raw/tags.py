@@ -23,13 +23,13 @@ def tag(
     if new:
         for newtag in new:
             if newtag in mytags:
-                click.echo(f"🦇 tag '{newtag}' already exists")
+                click.echo(f"🦇 Tag '{newtag}' already exists")
             else:
                 data.tags = [*data.tags, newtag]
-                click.echo(f"🦇 new tag - {newtag}")
+                click.echo(f"🦇 New tag - {newtag}")
     else:
         if mytags == []:
-            click.echo("🦇 your tag list is empty right now")
+            click.echo("🦇 Your tag list is empty right now")
             exit(1)
         for tag in mytags:
             click.echo(f"* {tag}")

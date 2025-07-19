@@ -1,6 +1,6 @@
 # 🦇 raw
 
-A CLI tool for tracking study and work time 👾
+A CLI Tool for Tracking Study and Work Time 👾
 
 Still under development... 🛠️
 
@@ -25,7 +25,7 @@ echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
 eval "$(/opt/homebrew/bin/brew shellenv)"
 ~~~
 
-## How to use
+## How to Use
 
 ❗️ below, if the parameter is in regular brackets - it is required (strict); 
 while if it is in square ones - it is an optional parameter (non-strict)
@@ -46,14 +46,14 @@ Execute ...
 * ```raw stop``` to finish the session
 * ```raw sessions``` - shows all of the finished sessions **on the provided date range...**
 
-### How to provide the date range ?
+### How to Provide the Date Range ?
 
 there are two options for the ```raw sessions``` command:
 * --dr
 * --lxd
 you **must** provide on of them (but not both!)
 
-#### --dr option
+#### --dr Option
 
 ```--dr``` means "dates range". you must provide regular dates range in this pattern:
 ~~~
@@ -64,7 +64,7 @@ end information is **not** required. if you do not provide it (just "(start).." 
 you can also provide such values as `today` & `all` to the `--dr` option, where `today` means "all the sessions that were started today
 AND are finished"
 
-#### --lxd option
+#### --lxd Option
 
 ```--lxd``` option just means "last X days". so if you execute ```raw sessions --lxd 7``` 
 it will output all the sessions for last 7 days (because "last 7 days"). also, lxd option should be grater 
