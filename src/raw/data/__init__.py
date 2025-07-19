@@ -3,4 +3,4 @@ from .active_session import ActiveSession
 from .session import Session
 
 
-__all__ = ['Data', 'ActiveSession', 'Session']
+__all__ = ["Data", "ActiveSession", "Session"]

@@ -20,14 +20,14 @@ class ActiveSession:
     @staticmethod
     def _begin(tags: list, msg: str, path: Path): # !underhood method!
         active_session = ActiveSession(tags, msg, TimePoint.now(), 0)
-        with open(path, 'wb') as file:
+        with open(path, "wb") as file:
             pickle.dump(active_session, file)
         return active_session
     @staticmethod
     def _finish(summary: str, path: Path): # !underhood method!
-        with open(path, 'rb') as file:
+        with open(path, "rb") as file:
             active_session: ActiveSession = pickle.load(file)
-        with open(path, 'wb') as file:
+        with open(path, "wb") as file:
             pickle.dump(None, file)
         return Session(
             active_session.tags, 

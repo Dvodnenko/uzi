@@ -44,10 +44,10 @@ class TimePoint:
         )
     
     def __sub__(self, other):
-        '''
+        """
         most likely ``self`` is the ``end`` time; ``other`` - the `start` one.
         because you do "``end - start``" (like in math) to get delta (here, timedelta)
-        '''
+        """
 
         self_date = self.date
         self_time = self.time

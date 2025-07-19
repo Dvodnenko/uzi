@@ -8,9 +8,9 @@ from ..views import create_file_if_not_exists
 
 class Data:
 
-    __ts_df_title = 'tags.pickle'
-    __ss_df_title = 'sessions.pickle'
-    __as_df_title = 'active_session.pickle'
+    __ts_df_title = "tags.pickle"
+    __ss_df_title = "sessions.pickle"
+    __as_df_title = "active_session.pickle"
     
     def __init__(self, dir: Path):
         self.dir = dir
@@ -29,14 +29,14 @@ class Data:
     def tags(self) -> list[str]:
         create_file_if_not_exists(self.__tags_path, [])
 
-        with open(self.__tags_path, 'rb') as file:
+        with open(self.__tags_path, "rb") as file:
             tags: list[str] = pickle.load(file)
         return tags
     @tags.setter
     def tags(self, newtags):
         create_file_if_not_exists(self.__tags_path, [])
 
-        with open(self.__tags_path, 'wb') as file:
+        with open(self.__tags_path, "wb") as file:
             pickle.dump(newtags, file)
         return None
 
@@ -44,14 +44,14 @@ class Data:
     def sessions(self) -> list[Session]:
         create_file_if_not_exists(self.__sessions_path, [])
 
-        with open(self.__sessions_path, 'rb') as file:
+        with open(self.__sessions_path, "rb") as file:
             sessions: list[str] = pickle.load(file)
         return sessions
     @sessions.setter
     def sessions(self, newsessions):
         create_file_if_not_exists(self.__sessions_path, [])
 
-        with open(self.__sessions_path, 'wb') as file:
+        with open(self.__sessions_path, "wb") as file:
             pickle.dump(newsessions, file)
         return None
 
@@ -59,13 +59,13 @@ class Data:
     def active_session(self) -> ActiveSession | None:
         create_file_if_not_exists(self.__as_path, None)
 
-        with open(self.__as_path, 'rb') as file:
+        with open(self.__as_path, "rb") as file:
             active_session: ActiveSession | None = pickle.load(file)
         return active_session
     @active_session.setter
     def active_session(self, activesession):
         create_file_if_not_exists(self.__as_path, None)
 
-        with open(self.__as_path, 'wb') as file:
+        with open(self.__as_path, "wb") as file:
             pickle.dump(activesession, file)
         return None

@@ -8,16 +8,16 @@ from .sessions import begin_session, finish_session, pause_session, check_sessio
 
 
 @click.group()
-@click.version_option(package_name='raw')
+@click.version_option(package_name="raw")
 @click.pass_context
 def raw(ctx: click.Context):
     config = load_config()
-    raw_directory = Path(config.get('raw_directory', str(DEFAULT_RAW_DIR)))
+    raw_directory = Path(config.get("raw_directory", str(DEFAULT_RAW_DIR)))
 
     if not raw_directory.exists():
         raw_directory.mkdir(parents=True, exist_ok=True)
 
-    ctx.obj = {'raw_directory': raw_directory, 'config': config}
+    ctx.obj = {"raw_directory": raw_directory, "config": config}
 
 @raw.group()
 def config():
@@ -27,25 +27,25 @@ def config():
 def create():
     config = load_config()
     save_config(config)
-    click.echo('🦇 configuration created')
+    click.echo("🦇 configuration created")
 
 @config.command()
 def show():
     if not CONFIG_FILE.exists():
-        click.echo('🦇 no configuration found')
+        click.echo("🦇 no configuration found")
         exit(1)
     
     config = load_config()
-    click.echo(f'raw data directory: {config.get('raw_directory', DEFAULT_RAW_DIR)}')
+    click.echo(f"raw data directory: {config.get("raw_directory", DEFAULT_RAW_DIR)}")
 
 @config.command()
-@click.option('-n', '--new-directory', type=click.Path(exists=False), help='')
+@click.option("-n", "--new-directory", type=click.Path(exists=False), help="")
 def update(new_directory: str):
     config = load_config()
-    config['raw_directory'] = new_directory
+    config["raw_directory"] = new_directory
 
     save_config(config)
-    click.echo(f'raw data directory set to "{new_directory}"')
+    click.echo(f"raw data directory set to '{new_directory}'")
 
 
 ## commands ##
@@ -54,9 +54,9 @@ def update(new_directory: str):
 raw.add_command(tag)
 
 # sessions
-raw.add_command(check_sessions, name='sessions')
-raw.add_command(begin_session, name='begin')
-raw.add_command(begin_session, name='start')
-raw.add_command(finish_session, name='finish')
-raw.add_command(finish_session, name='stop')
-raw.add_command(pause_session, name='pause')
+raw.add_command(check_sessions, name="sessions")
+raw.add_command(begin_session, name="begin")
+raw.add_command(begin_session, name="start")
+raw.add_command(finish_session, name="finish")
+raw.add_command(finish_session, name="stop")
+raw.add_command(pause_session, name="pause")
