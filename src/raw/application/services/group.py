@@ -1,8 +1,8 @@
-from ...domain import Group, FileRepository, Config, UseCaseResponse
+from ...domain import Group, EntityRepository, Config, UseCaseResponse
 
 
 class GroupService:
-    def __init__(self, repo: FileRepository, config: Config):
+    def __init__(self, repo: EntityRepository, config: Config):
         self.repo = repo
         self.config = config
 
@@ -15,7 +15,7 @@ class GroupService:
                 message=f"Group already exists: {group.subpath}/{group.title}", 
             )
         _path.mkdir(parents=True)
-        self.repo.save(group)
+        self.repo.dump(group)
         return UseCaseResponse(
             message=f"Group created: {group.subpath}/{group.title}"
         )
@@ -26,7 +26,7 @@ class GroupService:
             return UseCaseResponse(
                 message=f"Group not found: {subpath}", status_code=4
             )
-        self.repo.save(new)
+        self.repo.dump(new)
         return UseCaseResponse(
             message=f"Group updated: {subpath}"
         )
