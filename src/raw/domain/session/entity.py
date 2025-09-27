@@ -34,6 +34,3 @@ class Session(Entity):
             raise SessionIsActiveError('Total time is not accessible because the session is still active')
         res = self.end - self.start - self.breaks
         return res
-    
-    def __eq__(self, other):
-        return isinstance(other, Session) and self.ID == other.ID
