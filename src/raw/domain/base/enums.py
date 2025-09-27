@@ -19,3 +19,9 @@ class Color(Enum):
     BRIGHT_MAGENTA = "bright_magenta"
     BRIGHT_CYAN = "bright_cyan"
     BRIGHT_WHITE = "bright_white"
+
+
+class EntityType(Enum):
+    SESSION = "Session"
+    TAG = "Tag"
+    GROUP = "Group"
