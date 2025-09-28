@@ -12,6 +12,6 @@ class SystemService:
         as_ = self.repo.load(_system_as_path)
         return as_
     
-    def create_active_session(self, session: Session) -> None:
-        self.repo.dump(self.system_path, session)
+    def set_active_session(self, data: Session | None) -> None:
+        self.repo.dump(self.system_path, data)
         return None
