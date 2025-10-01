@@ -33,24 +33,6 @@ class SessionService:
         self.repo.dump(self.config.core.rootgroup, as_)
         return UseCaseResponse(message="Session finished", data=as_)
     
-    def update(self, subpath: str, new: Session) -> UseCaseResponse[Session]:
-        current_path = self.config.core.rootgroup / f"{subpath}{self.ending}.{self.repo.ext}"
-        if not current_path.exists() or not current_path.is_file():
-            return UseCaseResponse(
-                message=f"Session not found: {subpath}", status_code=4
-            )
-        new_path = self.config.core.rootgroup / new.subpath / f"{new.title}{self.ending}.{self.repo.ext}"
-        if new_path.exists():
-            return UseCaseResponse(
-                status_code=3,
-                message=f"Session already exists: {new.subpath}/{new.title}", 
-            )
-        self.repo.mv(current_path, new_path)
-        self.repo.dump(new)
-        return UseCaseResponse(
-            message=f"Session updated: {subpath}", data=new
-        )
-    
     def delete(self, subpath: str) -> UseCaseResponse[Session]:
         _path = self.config.core.rootgroup / f"{subpath}{self.ending}.{self.repo.ext}"
         if not _path.exists() or not _path.is_file():

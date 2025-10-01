@@ -22,23 +22,6 @@ class GroupService:
             message=f"Group created: {group.subpath}"
         )
     
-    def update(self, subpath: str, new: Group) -> UseCaseResponse[Group]:
-        current_path = self.config.core.rootgroup / subpath
-        if not current_path.exists() or not current_path.is_dir():
-            return UseCaseResponse(
-                message=f"Group not found: {subpath}", status_code=4
-            )
-        destination = self.config.core.rootgroup / new.subpath
-        destination_self = (destination / f"self.{self.repo.ext}")
-        if current_path != destination:
-            self.repo.mv(current_path, destination)
-            destination_self.parent.mkdir()
-            destination_self.touch()
-        self.repo.dump(self.config.core.rootgroup, new)
-        return UseCaseResponse(
-            message=f"Group updated: {subpath}"
-        )
-    
     def delete(self, subpath: str) -> UseCaseResponse[Group]:
         _path = self.config.core.rootgroup / subpath
         if not _path.exists() or not _path.is_dir():
