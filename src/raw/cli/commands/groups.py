@@ -11,10 +11,9 @@ from ...infrastructure import PickleDirectoryRepository
 @click.pass_context
 def groups_all(ctx: click.Context):
     rg = ctx.obj.core.rootgroup
-    rg_len = len(rg.parts)
     for group in rg.rglob("*"):
         if group.is_dir():
-            res = "".join(f"{x}/" for x in group.parts[rg_len:])
+            res = group.relative_to(rg)
             click.echo(res)
 
 
