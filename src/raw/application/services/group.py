@@ -9,6 +9,10 @@ class GroupService:
     def __init__(self, repo: EntityRepository, config: Config):
         self.repo = repo
         self.config = config
+
+    def select(self, fields: tuple, path: Path):
+        obj = self.repo.load(path)
+        
     
     def yield_all(self) -> Generator[str, Any, None]:
         rg = self.config.core.rootgroup
