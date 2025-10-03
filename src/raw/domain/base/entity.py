@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
 from .enums import Color, EntityType
 
@@ -19,3 +20,10 @@ class Entity:
     
     def __eq__(self, other):
         return isinstance(other, Entity) and self.subpath == other.subpath
+
+    def getattr(self, atr: str) -> Any:
+        keys = atr.split(".")
+        result = self.__getattribute__(keys[0])
+        for key in keys[1:]:
+            result = result.__getattribute__(key)
+        return result
