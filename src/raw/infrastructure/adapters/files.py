@@ -14,7 +14,7 @@ class PickleFileRepository(EntityRepository):
     ext: str | None = "pickle"
 
     def dump(self, path: Path, entity: Entity):
-        with open(f"{path}.{self.ext}", "wb") as file:
+        with open(f"{path}", "wb") as file:
             pickle.dump(entity, file)
         return None
 
@@ -42,13 +42,13 @@ class PickleDirectoryRepository(EntityRepository):
         return None
 
     def load(self, path: Path) -> Entity: # path example: IT/Work
-        data = self.__file_repo.load(path / f".self.{self.ext}")
+        data = self.__file_repo.load(path / f".self")
         return data
     
     # current & new - NOT subpaths, but absolute paths, starting from config rootgroup
     def mv(self, current: Path, new: Path, *, rootgroup: Path):
         current.rename(new)
-        self_path = new / f".self.{self.ext}"
+        self_path = new / f".self"
         data = self.__file_repo.load(self_path)
         data.subpath = new.relative_to(rootgroup)
         self.__file_repo.dump(new / ".self", data)

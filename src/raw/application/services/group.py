@@ -24,7 +24,7 @@ class GroupService:
                 message=f"Group already exists: {group.subpath}", 
             )
         _path.mkdir(parents=False)
-        (_path / f".self.{self.repo.ext}").touch()
+        (_path / f".self").touch()
         self.repo.dump(_path/ f".self", group)
         return UseCaseResponse(
             message=f"Group created: {group.subpath}"

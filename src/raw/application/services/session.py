@@ -17,7 +17,7 @@ class SessionService:
             return UseCaseResponse(message="Session already started", status_code=3, data=as_)
         system_service.set_active_session(data=session)
         (self.config.core.rootgroup / session.subpath / \
-            f"{session.title}{self.ending}.{self.repo.ext}").touch()
+            f"{session.title}{self.ending}").touch()
         self.repo.dump(self.config.core.rootgroup, session)
         return UseCaseResponse(
             message=f"Session started", data=session
@@ -34,7 +34,7 @@ class SessionService:
         return UseCaseResponse(message="Session finished", data=as_)
     
     def delete(self, subpath: str) -> UseCaseResponse[Session]:
-        _path = self.config.core.rootgroup / f"{subpath}{self.ending}.{self.repo.ext}"
+        _path = self.config.core.rootgroup / f"{subpath}{self.ending}"
         if not _path.exists() or not _path.is_file():
             return UseCaseResponse(
                 message=f"Session not found: {subpath}", status_code=4
