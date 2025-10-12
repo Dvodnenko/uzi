@@ -3,12 +3,11 @@ from typing import Optional
 from sqlalchemy import Integer, String, UniqueConstraint, ForeignKey, Enum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from ..orm_registry import mapping_registry
+from ..base import Base
 from ...enums.color import Color
 
 
-@mapping_registry.mapped_as_dataclass
-class Entity:
+class Entity(Base):
     __tablename__ = "entities"
 
     id: Mapped[int] = mapped_column(

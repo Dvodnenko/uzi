@@ -1,11 +1,10 @@
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 
-from ..orm_registry import mapping_registry
+from ..base import Base
 
 
-@mapping_registry.mapped_as_dataclass
-class Folder:
+class Folder(Base):
     __tablename__ = "folders"
 
     id: Mapped[int] = mapped_column(
