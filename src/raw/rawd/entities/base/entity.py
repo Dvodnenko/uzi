@@ -21,6 +21,12 @@ class Entity:
         if not self.title.startswith("/"):
             self.title = f"/{self.title}"
 
+    def update(self, **kwargs):
+        for key, value in kwargs.items():
+            self.__setattr__(key, value)
+        self.__post_init__()
+        return self
+
     @property
     def parentstr(self) -> str:
         return self.title[0:self.title.rfind("/")]
