@@ -8,6 +8,11 @@ import atexit
 
 import setproctitle
 
+from .handler import handlecmd
+from .database.orm_registry import mapping_registry
+from .database.session import engine
+from .database.mappings import map_tables
+
 
 SOCKET_PATH = "/tmp/raw.sock"
 PID_PATH = "/tmp/raw.pid"
@@ -30,16 +35,19 @@ def run():
 
     atexit.register(cleanup)
 
+    mapping_registry.metadata.create_all(bind=engine)
+    map_tables()
+
     try:
         while True:
             conn, _ = server.accept()
-            data = conn.recv(1024).decode()
-            if not data:
+            request = conn.recv(1024).decode()
+            if not request:
                 conn.close()
                 continue
-
-            reply = f"Received (V4): {data.upper()}"
-            conn.sendall(reply.encode())
+            
+            response = handlecmd(request)
+            conn.sendall(response.encode())
             conn.close()
     finally:
         server.close()
