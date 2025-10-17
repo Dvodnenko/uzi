@@ -1,5 +1,7 @@
+from sqlalchemy import select
+
 from ..repositories.folder import saFolderRepository
-from ..database.mappings.folder import Folder
+from ..entities import Folder, Entity
 from ..database.session import Session
 
 
@@ -8,6 +10,12 @@ class FolderService:
         self.repository = saFolderRepository(Session())
 
     def create(self, args: list, flags: list, **kwargs) -> tuple[str, int]:
+        refs = kwargs.get("refs")
+        if refs:
+            refs_list = refs.split(",")
+            query = select(Entity).where(Entity.title.in_(refs_list))
+            entities = self.repository.session.scalars(query).unique().all()
+            kwargs["refs"] = entities
         folder = Folder(**kwargs)
         if self.repository.get(folder.title):
             return f"Folder already exists: {folder.title}", 1
@@ -28,6 +36,15 @@ class FolderService:
         return "".join(f"{f.title}\n" for f in folders), 0
         
     def update(self, args: list, flags: list, **kwargs):
+        refs = kwargs.get("refs")
+        if "refs" in kwargs.keys():
+            if refs is "":
+                kwargs["refs"] = []
+            else:
+                refs_list = refs.split(",")
+                query = select(Entity).where(Entity.title.in_(refs_list))
+                entities = self.repository.session.scalars(query).unique().all()
+                kwargs["refs"] = entities
         current = self.repository.get(args[0])
         if not current:
             return f"Folder not found: {args[0]}", 1
