@@ -1,9 +1,10 @@
 from sqlalchemy.orm import relationship
 
 from ..orm_registry import mapping_registry
-from ...entities import Entity, Folder
+from ...entities import Entity, Folder, Session
 from .entity import entities_table, entity_refs_table
 from .folder import folders_table
+from .session import sessions_table
 
 
 def map_entities_table():
@@ -43,7 +44,14 @@ def map_folders_table():
         }
     )
 
+def map_sessions_table():
+    mapping_registry.map_imperatively(
+        Session, sessions_table, inherits=Entity, 
+        polymorphic_identity="session",
+    )
+
 
 def map_tables():
     map_entities_table()
     map_folders_table()
+    map_sessions_table()
