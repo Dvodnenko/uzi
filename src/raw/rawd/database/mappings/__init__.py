@@ -2,7 +2,7 @@ from sqlalchemy.orm import relationship
 
 from ..orm_registry import mapping_registry
 from ...entities import Entity, Folder, Session
-from .entity import entities_table, entity_refs_table
+from .entity import entities_table, entity_links_table
 from .folder import folders_table
 from .session import sessions_table
 
@@ -14,11 +14,11 @@ def map_entities_table():
         polymorphic_on=entities_table.c.type,
         polymorphic_identity="entity",
         properties={
-            "refs": relationship(
+            "links": relationship(
                 "Entity",
-                secondary=entity_refs_table,
-                primaryjoin=entities_table.c.id == entity_refs_table.c.entity_id,
-                secondaryjoin=entities_table.c.id == entity_refs_table.c.ref_id,
+                secondary=entity_links_table,
+                primaryjoin=entities_table.c.id == entity_links_table.c.entity_id,
+                secondaryjoin=entities_table.c.id == entity_links_table.c.link_id,
                 lazy="joined",
             ),
             "parent": relationship(

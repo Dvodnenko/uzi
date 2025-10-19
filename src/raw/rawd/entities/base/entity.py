@@ -11,7 +11,7 @@ class Entity:
     icon: str = ""
     description: str = ""
 
-    refs: list["Entity"] = field(
+    links: list["Entity"] = field(
         default_factory=lambda: [])
     parent_id: int = None
     parent: "Folder" = None

@@ -21,10 +21,10 @@ entities_table = Table(
     UniqueConstraint("title", "type", name="uq_entities_title_type"),
 )
 
-entity_refs_table = Table(
-    "entity_refs", mapping_registry.metadata,
+entity_links_table = Table(
+    "entity_links", mapping_registry.metadata,
     Column("entity_id", Integer, 
            ForeignKey("entities.id", ondelete="CASCADE"), primary_key=True),
-    Column("ref_id", Integer, 
+    Column("link_id", Integer, 
            ForeignKey("entities.id", ondelete="CASCADE"), primary_key=True),
 )

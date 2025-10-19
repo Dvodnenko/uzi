@@ -10,12 +10,12 @@ class FolderService:
         self.repository = saFolderRepository(Session())
 
     def create(self, args: list, flags: list, **kwargs) -> tuple[str, int]:
-        refs = kwargs.get("refs")
-        if refs:
-            refs_list = refs.split(",")
-            query = select(Entity).where(Entity.title.in_(refs_list))
+        links = kwargs.get("links")
+        if links:
+            links_list = links.split(",")
+            query = select(Entity).where(Entity.title.in_(links_list))
             entities = self.repository.session.scalars(query).unique().all()
-            kwargs["refs"] = entities
+            kwargs["links"] = entities
         folder = Folder(**kwargs)
         if self.repository.get(folder.title):
             return f"Folder already exists: {folder.title}", 1
@@ -36,15 +36,15 @@ class FolderService:
         return "".join(f"{f.title}\n" for f in folders), 0
         
     def update(self, args: list, flags: list, **kwargs):
-        refs = kwargs.get("refs")
-        if "refs" in kwargs.keys():
-            if refs is "":
-                kwargs["refs"] = []
+        links = kwargs.get("links")
+        if "links" in kwargs.keys():
+            if links is "":
+                kwargs["links"] = []
             else:
-                refs_list = refs.split(",")
-                query = select(Entity).where(Entity.title.in_(refs_list))
+                links_list = links.split(",")
+                query = select(Entity).where(Entity.title.in_(links_list))
                 entities = self.repository.session.scalars(query).unique().all()
-                kwargs["refs"] = entities
+                kwargs["links"] = entities
         current = self.repository.get(args[0])
         if not current:
             return f"Folder not found: {args[0]}", 1
