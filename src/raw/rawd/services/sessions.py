@@ -6,6 +6,7 @@ from ..repositories.session import saSessionRepository
 from ..repositories.folder import saFolderRepository
 from ..entities import Session, Entity
 from ..database.session import Session as ormSession
+from ..database.funcs import get_all_by_titles
 
 
 class SessionService:
@@ -66,7 +67,11 @@ class SessionService:
             key=lambda f: getattr(f, sortby),
             reverse="r" in flags
         )
-        return "".join(f"{f.title}\n" for f in sessions), 0
+        return "".join(f"{f.title}\n" for f in sessions)[:-1], 0
+    
+    def print(self, args: list, flags: list, **kwargs):
+        sessions = get_all_by_titles(self.repository.session, Session, args)
+        return "".join(f"{s.title}\n" for s in sessions)[:-1], 0
         
     def update(self, args: list, flags: list, **kwargs):
         refs = kwargs.get("refs")
