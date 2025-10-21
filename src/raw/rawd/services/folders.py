@@ -3,6 +3,7 @@ from sqlalchemy import select
 from ..repositories.folder import saFolderRepository
 from ..entities import Folder, Entity
 from ..database.session import Session
+from ..database.funcs import get_all_by_titles
 
 
 class FolderService:
@@ -33,7 +34,11 @@ class FolderService:
             key=lambda f: getattr(f, sortby),
             reverse="r" in flags
         )
-        return "".join(f"{f.title}\n" for f in folders), 0
+        return "".join(f"{f.title}\n" for f in folders)[:-1], 0
+    
+    def print(self, args: list, flags: list, **kwargs):
+        folders = get_all_by_titles(self.repository.session, Folder, args)
+        return "".join(f"{f.title}\n" for f in folders)[:-1], 0
         
     def update(self, args: list, flags: list, **kwargs):
         links = kwargs.get("links")
