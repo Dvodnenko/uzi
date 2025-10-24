@@ -1,12 +1,21 @@
 from dataclasses import dataclass, field
+from hashlib import blake2b
+from datetime import datetime
 
 from .enums import Color
+
+
+def generate_title():
+    return blake2b(
+        digest_size=20,
+        data=bytes(datetime.now().isoformat(), encoding="utf-8")
+    ).hexdigest()
 
 
 @dataclass(eq=False)
 class Entity:
 
-    title: str # /a/b/c, not just c
+    title: str = field(default_factory=generate_title) # /a/b/c, not just c
     color: Color = Color.WHITE
     icon: str = ""
     description: str = ""

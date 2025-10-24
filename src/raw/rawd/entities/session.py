@@ -1,21 +1,12 @@
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
-from hashlib import blake2b
 
 from .entity import Entity
-
-
-def generate_title():
-    return blake2b(
-        digest_size=20,
-        data=bytes(datetime.now().isoformat(), encoding="utf-8")
-    ).hexdigest()
 
 
 @dataclass(kw_only=True, eq=False)
 class Session(Entity):
     start: datetime
-    title: str = field(default_factory=generate_title)
     summary: str = ""
     end: datetime | None = field(default=None, kw_only=True)
 
