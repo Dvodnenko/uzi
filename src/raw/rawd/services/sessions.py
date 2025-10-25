@@ -19,8 +19,10 @@ class SessionService(BaseService):
         _tcm = {
             "color": lambda x: int(x),
             "links": lambda x: get_all_by_titles(Entity, x.split(",")),
-            "start": lambda x: datetime.fromisoformat(x),
-            "end": lambda x: datetime.fromisoformat(x),
+            "start": lambda x: (datetime.fromisoformat(x).replace(microsecond=0) 
+                                if x else datetime.now().replace(microsecond=0)),
+            "end": lambda x: (datetime.fromisoformat(x).replace(microsecond=0) 
+                                if x else datetime.now().replace(microsecond=0)),
         }
         keys = set(_tcm.keys()).intersection(kwargs.keys())
         for key in keys:
@@ -31,9 +33,7 @@ class SessionService(BaseService):
         active = self.get_active()
         if active:
             return f"Session is already started: '{active.title}'", 1
-        kwargs = self.cast_kwargs(**kwargs)
-        kwargs["start"] = datetime.now().replace(microsecond=0)
-        session = Session(**kwargs)
+        session = Session(**self.cast_kwargs(**kwargs))
         if session.parentstr != "":
             if not self.folders_repository.get(session.parentstr):
                 return f"Folder not found: {session.parentstr}", 1
@@ -45,7 +45,6 @@ class SessionService(BaseService):
         if not session:
             return "Active Session not found", 1
         kwargs = self.cast_kwargs(**kwargs)
-        kwargs["end"] = datetime.now().replace(microsecond=0)
         current_title = session.title
         self.repository.update(current_title, **kwargs)
         return "Session stoped", 0
