@@ -2,18 +2,16 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session as ormSession
 
 from ..entities import Tag
+from ..database.session import transaction
 
 
 class saTagRepository:
     def __init__(self, session: ormSession):
         self.session = session
 
+    @transaction
     def create(self, tag: Tag) -> None:
-        if tag.parentstr != "":
-            parent = self.get(tag.parentstr)
-            tag.parent = parent
         self.session.add(tag)
-        self.session.commit()
         return None
 
     def get(self, title: str) -> Tag | None:
@@ -27,15 +25,15 @@ class saTagRepository:
         tags = self.session.scalars(query).unique().all()
         return tags
 
+    @transaction
     def update(self, title_: str, **kwargs) -> None:
         tag = (self.session.query(Tag)
                   .filter_by(title=title_)
                   .first())
         tag = tag.update(**kwargs)
-        self.session.commit()
         return None
 
+    @transaction
     def delete(self, entity: Tag) -> None:
         self.session.delete(entity)
-        self.session.commit()
         return None
