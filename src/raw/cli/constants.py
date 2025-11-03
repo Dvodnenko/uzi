@@ -33,4 +33,6 @@ def generate_plist(script_path: Path | str):
             "SuccessfulExit": False,
             "Crashed": True,
         },
+        "StandardOutPath": "/tmp/raw.out.log",
+        "StandardErrorPath": "/tmp/raw.out.log",
     }
