@@ -1,7 +1,8 @@
 import sys
 from typing import Any, Generator
 
-from ..icmds import (daemon_start_darwin, daemon_stop_darwin, raw_init_darwin)
+from ..icmds import (daemon_start_darwin, daemon_stop_darwin, raw_init_darwin,
+                     daemon_restart_darwin)
 
 
 if sys.platform.lower() == "darwin":
@@ -10,6 +11,7 @@ if sys.platform.lower() == "darwin":
         "daemon": {
             "start": daemon_start_darwin,
             "stop": daemon_stop_darwin,
+            "restart": daemon_restart_darwin,
         },
     }
 elif sys.platform.lower() == "linux":
