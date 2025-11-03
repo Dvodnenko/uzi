@@ -26,3 +26,4 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 raw = "raw.cli:raw"
+rawd = "raw.rawd.daemon:run"
