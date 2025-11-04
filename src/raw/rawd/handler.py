@@ -61,11 +61,7 @@ def handlecmd(request: str):
 
     except Exception as e:
         method.close()
-        print(e)
-        if "v" in flags:
-            yield format_response_json(f"An error occurred: {e}", 1)
-        else:
-            yield format_response_json("An error occurred", 1)
+        raise e
     finally:
         orm_session.expunge_all()
         orm_session.close()

@@ -48,13 +48,15 @@ def cast_kwargs(
                 if parentstr != "": # has parent
                     local_folder_repo = saFolderRepository(
                         self.repository.session)
-                    parent = local_folder_repo.get(
-                        parentstr)
+                    parent = next(local_folder_repo.get(parentstr))
                     if not parent:
-                        return f"Folder not found: {parentstr}", 1
+                        yield f"Folder not found: {parentstr}", 1
+                        return
                     kwargs["parent"] = parent
+
+            print(f"casted kwargs: {kwargs}")
                 
-            return func(self, args, flags, **kwargs)
+            yield from func(self, args, flags, **kwargs)
         return wrap
     return decorator
 
