@@ -19,8 +19,8 @@ class SessionService:
         if active:
             yield f"Session is already started: '{active.title}'", 1
             return
-        kwargs["start"] = kwargs.get("start") or \
-            datetime.now().replace(microsecond=0)
+        kwargs["start"] = kwargs.get("start", 
+            datetime.now().replace(microsecond=0))
         session = Session(**kwargs)
         next(self.repository.create(session))
         yield f"Session started", 0
@@ -31,8 +31,8 @@ class SessionService:
         if not session:
             yield "Active Session not found", 1
             return
-        kwargs["end"] = kwargs.get("end") or \
-            datetime.now().replace(microsecond=0)
+        kwargs["end"] = kwargs.get("end",
+            datetime.now().replace(microsecond=0))
         next(self.repository.update(session.title, **kwargs))
         yield "Session stoped", 0
     

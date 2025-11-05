@@ -1,4 +1,3 @@
-from datetime import datetime
 from dataclasses import fields
 
 from ..entities import Entity, Color, TaskStatus
@@ -27,20 +26,18 @@ def cast_kwargs(
                 kwargs["status"] = TaskStatus(
                     int(kwargs["status"]))
             if kwargs.get("links"):
+                kwargs["links"] = []
                 if kwargs["links"] == "":
-                    kwargs["links"] = []
+                    ...
                 else:
-                    kwargs["links"] = get_all_by_titles(
+                    kwargs["links"] = []
+                    gen = get_all_by_titles(
                         self.repository.session,
                         Entity, 
                         kwargs["links"].split(",")
                     )
-            if kwargs.get("start"):
-                kwargs["start"] = datetime.fromisoformat(
-                    kwargs["start"]).replace(microsecond=0)
-            if kwargs.get("end"):
-                kwargs["end"] = datetime.fromisoformat(
-                    kwargs["end"]).replace(microsecond=0)
+                    for link in gen:
+                        kwargs["links"].append(link)
             if kwargs.get("title"):
                 title = kwargs.get("title")
                 kwargs["title"] = title
@@ -53,8 +50,6 @@ def cast_kwargs(
                         yield f"Folder not found: {parentstr}", 1
                         return
                     kwargs["parent"] = parent
-
-            print(f"casted kwargs: {kwargs}")
                 
             yield from func(self, args, flags, **kwargs)
         return wrap
