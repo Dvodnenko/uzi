@@ -26,15 +26,15 @@ def cast_kwargs(
                 kwargs["status"] = TaskStatus(
                     int(kwargs["status"]))
             if kwargs.get("links"):
-                kwargs["links"] = []
                 if kwargs["links"] == "":
                     ...
                 else:
+                    linksstr: str = kwargs["links"]
                     kwargs["links"] = []
                     gen = get_all_by_titles(
                         self.repository.session,
                         Entity, 
-                        kwargs["links"].split(",")
+                        linksstr.split(",")
                     )
                     for link in gen:
                         kwargs["links"].append(link)
@@ -65,4 +65,3 @@ def provide_conf(func):
         return func(*args, **kwargs, __cnf=CONFIG)
     
     return wrapper
-
