@@ -8,7 +8,7 @@ from .mappings import map_tables
 
 conf = load_config()
 engine = create_engine(
-    conf.get("data_file_path"), 
+    url=f"sqlite:///{conf.get("data_file_path")}",
     echo=conf.get("echo"),
 )
 SessionFactory = sessionmaker(bind=engine)
