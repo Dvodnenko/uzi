@@ -36,3 +36,28 @@ def generate_plist(script_path: Path | str):
         "StandardOutPath": "/tmp/raw.out.log",
         "StandardErrorPath": "/tmp/raw.err.log",
     }
+
+
+## Service file data (for Linux)
+
+SERVICE_PATH = Path("/etc") / "systemd" / "system" / "raw.service"
+
+def generate_service(script_path: Path | str):
+    return f"""
+[Unit]
+Description=Raw Daemon Service
+After=network.target
+
+[Service]
+ExecStart={script_path}
+Restart=on-failure
+RestartSec=3
+StandardOutput=append:/tmp/raw.out.log
+StandardError=append:/tmp/raw.err.log
+
+SuccessExitStatus=0
+RestartPreventExitStatus=0
+
+[Install]
+WantedBy=multi-user.target
+    """
