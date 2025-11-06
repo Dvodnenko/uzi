@@ -28,7 +28,6 @@ def generate_plist(script_path: Path | str):
     return {
         "Label": PLIST_LABEL,
         "ProgramArguments": [script_path],
-        "RunAtLoad": True,
         "KeepAlive": {
             "SuccessfulExit": False,
             "Crashed": True,

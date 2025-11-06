@@ -1,7 +1,7 @@
 import subprocess
 import os
 
-from ...constants import DAEMON_PID_PATH, PLIST_PATH
+from ...constants import DAEMON_PID_PATH, PLIST_PATH, PLIST_LABEL
 
 
 def getdpid() -> int | None:
@@ -12,8 +12,7 @@ def getdpid() -> int | None:
 
 def daemon_start(args, kwargs, flags):
     try:
-        subprocess.run(["launchctl", "bootstrap", 
-                        f"gui/{os.getuid()}", PLIST_PATH], check=True)
+        subprocess.run(["launchctl", "start", PLIST_LABEL], check=True)
     except subprocess.CalledProcessError as e:
         yield f"An error occurred: {e}", 1
         return
@@ -21,8 +20,7 @@ def daemon_start(args, kwargs, flags):
 
 def daemon_stop(args, kwargs, flags):
     try:
-        subprocess.run(["launchctl", "bootout", 
-                        f"gui/{os.getuid()}", PLIST_PATH], check=True)
+        subprocess.run(["launchctl", "stop", PLIST_LABEL], check=True)
     except subprocess.CalledProcessError as e:
         yield f"An error occurred: {e}", 1
         return
@@ -30,9 +28,35 @@ def daemon_stop(args, kwargs, flags):
 
 def daemon_restart(args, kwargs, flags):
     try:
-        yield from daemon_stop(args, kwargs, flags)
-        yield from daemon_start(args, kwargs, flags)
+        subprocess.run(["launchctl", "kickstart", "-k", 
+                        f"gui/{os.getuid()}/{PLIST_LABEL}"], check=True)
     except subprocess.CalledProcessError as e:
         yield f"An error occurred: {e}", 1
         return
     yield "Daemon restarted", 0
+
+def daemon_load(args, kwargs, flags):
+    try:
+        subprocess.run(["launchctl", "bootstrap", 
+                        f"gui/{os.getuid()}", PLIST_PATH], check=True)
+    except subprocess.CalledProcessError as e:
+        yield f"An error occurred: {e}", 1
+        return
+    yield "Daemon loaded", 0
+
+def daemon_unload(args, kwargs, flags):
+    try:
+        subprocess.run(["launchctl", "bootout", 
+                        f"gui/{os.getuid()}", PLIST_PATH], check=True)
+    except subprocess.CalledProcessError as e:
+        yield f"An error occurred: {e}", 1
+        return
+    yield "Daemon unloaded", 0
+
+def daemon_remove(args, kwargs, flags):
+    try:
+        subprocess.run(["launchctl", "remove", PLIST_LABEL], check=True)
+    except subprocess.CalledProcessError as e:
+        yield f"An error occurred: {e}", 1
+        return
+    yield "Daemon removed", 0
