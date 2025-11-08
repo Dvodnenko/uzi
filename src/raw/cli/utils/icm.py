@@ -2,16 +2,10 @@ import sys
 from typing import Any, Generator
 
 from ..icmds import (
-<<<<<<< HEAD:src/wu/cli/utils/icm.py
-    daemon_start_darwin, daemon_stop_darwin, wu_init_darwin, daemon_restart_darwin,
-    daemon_start_linux, daemon_stop_linux, wu_init_linux, daemon_restart_linux,
-    daemon_disable_linux, daemon_enable_linux, daemon_load_darwin, daemon_unload_darwin,
-    daemon_remove_darwin,
-=======
     daemon_start_darwin, daemon_stop_darwin, raw_init_darwin, daemon_restart_darwin,
     daemon_start_linux, daemon_stop_linux, raw_init_linux, daemon_restart_linux,
-    daemon_disable_linux, daemon_enable_linux,
->>>>>>> parent of 775652a (refactor: change project title to wu):src/raw/cli/utils/icm.py
+    daemon_disable_linux, daemon_enable_linux, daemon_load_darwin, daemon_remove_darwin,
+    daemon_unload_darwin,
 )
 
 

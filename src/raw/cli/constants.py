@@ -7,7 +7,7 @@ DAEMON_PID_PATH = Path("/tmp/raw.pid")
 CONFIG_PATH = Path.home() / ".config" / "raw" / "config.json"
 SUPPORTED_SYSTEMS = ("darwin", "linux")
 DEFAULT_CONFIG = {
-    "data_file_path": f"sqlite:///{Path.home()}/.raw.sqlite",
+    "data_file_path": f"{Path.home()}/.raw.sqlite",
 
     "formats": {
         "folder": "* #{id} \u001b[{color}m{title}\u001b[0m",
