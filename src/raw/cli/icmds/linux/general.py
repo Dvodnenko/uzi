@@ -2,7 +2,7 @@ import shutil
 import json
 
 from ...constants import CONFIG_PATH, DEFAULT_CONFIG, generate_service, SERVICE_PATH
-from ....config import load_config
+from ....common.config import load_config
 
 
 def raw_init(args, kwargs, flags):

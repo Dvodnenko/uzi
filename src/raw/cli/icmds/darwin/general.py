@@ -3,7 +3,7 @@ import json
 import plistlib
 
 from ...constants import CONFIG_PATH, DEFAULT_CONFIG, generate_plist, PLIST_PATH
-from ....config import load_config
+from ....common.config import load_config
 
 
 def raw_init(args, kwargs, flags):

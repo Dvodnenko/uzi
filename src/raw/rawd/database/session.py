@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, scoped_session
 
-from ...config import load_config
+from ...common.config import load_config
 from .orm_registry import mapping_registry
 from .mappings import map_tables
 

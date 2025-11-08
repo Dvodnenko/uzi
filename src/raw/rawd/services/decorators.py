@@ -3,7 +3,7 @@ from dataclasses import fields
 from ..entities import Entity, Color, TaskStatus
 from ..repositories.folder import saFolderRepository
 from ..database.funcs import get_all_by_titles
-from ...config import load_config
+from ...common.config import load_config
 
 
 def cast_kwargs(
