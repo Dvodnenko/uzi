@@ -2,13 +2,19 @@ from dataclasses import fields
 from datetime import datetime
 from enum import IntEnum
 
+import dateparser
+
 from ..entities import Entity
 from ..repositories.folder import saFolderRepository
 from ..database.funcs import get_all_by_titles
 
 
 def cast_datetime(value: str):
-    return datetime.fromisoformat(value)
+    return (dateparser.parse(value) or \
+        datetime.now()).replace(microsecond=0)
+
+def is_(type_: type, other: type):
+    return (type_ is other) or (issubclass(type_, other))
 
 
 def cast_kwargs(
@@ -18,15 +24,13 @@ def cast_kwargs(
 
     def decorator(func):
         def wrap(self, args: list, flags: list, **kwargs):
-            allowed = {f for f in fields(model)}\
-                .intersection({k for k in kwargs.keys()}\
-                .difference(exclude)
-            )
+            allowed = {f for f in fields(model)}
 
-            def is_(type_: type, other: type):
-                return (type_ is other) or (issubclass(type_, other))
-            
             for field in allowed:
+                if not field.name in {f.name for f in allowed}\
+                    .intersection(k for k in kwargs.keys())\
+                    .difference(exclude):
+                    continue
                 if is_(field.type, datetime):
                     kwargs[field.name] = cast_datetime(kwargs[field.name])
                 elif is_(field.type, IntEnum):
