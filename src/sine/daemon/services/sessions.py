@@ -7,6 +7,7 @@ from ..database.funcs import get_all_by_titles
 from .decorators import cast_kwargs
 from .base import Service
 from ...common import load_config, parse_afk
+from ..funcs import asexc
 
 
 PARSER = parse_afk
@@ -28,7 +29,7 @@ class SessionService(Service):
             gen = getattr(self, argv[0])(args=args, flags=flags, **kwargs)
             yield from gen
         except Exception as e:
-            yield e.args, 1
+            yield asexc(e), 1
 
     @cast_kwargs(Session)
     def begin(self, args: list, flags: list, **kwargs):

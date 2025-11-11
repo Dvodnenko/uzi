@@ -10,6 +10,7 @@ from .repositories.session import saSessionRepository
 from .repositories.tag import saTagRepository
 from .repositories.task import saTaskRepository
 from .database.session import Session
+from .funcs import asexc
 
 
 SERVICES = {
@@ -55,7 +56,7 @@ def handlecmd(request: str):
 
     except Exception as e:
         method.close()
-        raise e
+        yield format_response_json(asexc(e), 1)
     finally:
         orm_session.expunge_all()
         orm_session.close()
