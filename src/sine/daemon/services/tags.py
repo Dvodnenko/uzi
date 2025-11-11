@@ -1,7 +1,7 @@
 from ..repositories.tag import saTagRepository
 from ..repositories.folder import saFolderRepository
 from ..entities import Tag
-from ..database.funcs import get_all_by_titles
+from ..database.funcs import get_all_by_titles, select
 from .decorators import cast_kwargs
 from .base import Service
 from ...common import load_config, parse_afk
@@ -45,6 +45,20 @@ class TagService(Service):
         else:
             pattern: str = load_config()["formats"]["tag"]
             for tag in self.repository.get_all(sortby):
+                yield pattern.format(**tag.to_dict()), 0
+
+    def select(self, args: list, flags: list, **kwargs):
+        sortby = kwargs.get("sortby")
+        if sortby:
+            kwargs.pop("sortby")
+        else:
+            sortby = "title"
+        if "t" in flags:
+            for tag in select(self.repository.session, Tag, kwargs, sortby):
+                yield tag.title, 0
+        else:
+            pattern: str = load_config()["formats"]["tag"]
+            for tag in select(self.repository.session, Tag, kwargs, sortby):
                 yield pattern.format(**tag.to_dict()), 0
     
     def print(self, args: list, flags: list, **kwargs):
