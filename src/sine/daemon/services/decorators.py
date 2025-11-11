@@ -1,8 +1,14 @@
 from dataclasses import fields
+from datetime import datetime
+from enum import IntEnum
 
-from ..entities import Entity, Color, TaskStatus
+from ..entities import Entity
 from ..repositories.folder import saFolderRepository
 from ..database.funcs import get_all_by_titles
+
+
+def cast_datetime(value: str):
+    return datetime.fromisoformat(value)
 
 
 def cast_kwargs(
@@ -12,18 +18,20 @@ def cast_kwargs(
 
     def decorator(func):
         def wrap(self, args: list, flags: list, **kwargs):
-            allowed = {f.name for f in fields(model)}
-            kwargs = {key: kwargs[key] 
-                               for key in allowed.\
-                                intersection(kwargs.keys()).\
-                                difference(exclude)}
+            allowed = {f for f in fields(model)}\
+                .intersection({k for k in kwargs.keys()}\
+                .difference(exclude)
+            )
 
-            if kwargs.get("color"):
-                kwargs["color"] = Color(
-                    int(kwargs["color"]))
-            if kwargs.get("status"):
-                kwargs["status"] = TaskStatus(
-                    int(kwargs["status"]))
+            def is_(type_: type, other: type):
+                return (type_ is other) or (issubclass(type_, other))
+            
+            for field in allowed:
+                if is_(field.type, datetime):
+                    kwargs[field.name] = cast_datetime(kwargs[field.name])
+                elif is_(field.type, IntEnum):
+                    field.type(int(kwargs[field.name]))
+
             if kwargs.get("links"):
                 if kwargs["links"] == "":
                     ...
@@ -49,6 +57,7 @@ def cast_kwargs(
                         yield f"Folder not found: {parentstr}", 1
                         return
                     kwargs["parent"] = parent
+
                 
             yield from func(self, args, flags, **kwargs)
         return wrap
