@@ -5,7 +5,7 @@ from ....common.constants import CONFIG_PATH, DEFAULT_CONFIG, generate_service, 
 from ....common.config import load_config
 
 
-def init(args, kwargs, flags):
+def init(args, flags, kwargs):
     
     ## Config
 

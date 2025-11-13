@@ -9,7 +9,7 @@ def getdpid() -> int | None:
             return int(pidfile.read())
     return None
 
-def daemon_start(args, kwargs, flags):
+def daemon_start(args, flags, kwargs):
     try:
         subprocess.run(["sudo", "systemctl", "start", SERVICE_PATH], check=True)
     except subprocess.CalledProcessError as e:
@@ -17,7 +17,7 @@ def daemon_start(args, kwargs, flags):
         return
     yield "Daemon started", 0
 
-def daemon_enable(args, kwargs, flags):
+def daemon_enable(args, flags, kwargs):
     try:
         subprocess.run(["sudo", "systemctl", "enable", SERVICE_PATH], check=True)
     except subprocess.CalledProcessError as e:
@@ -25,7 +25,7 @@ def daemon_enable(args, kwargs, flags):
         return
     yield "Daemon enabled", 0
 
-def daemon_disable(args, kwargs, flags):
+def daemon_disable(args, flags, kwargs):
     try:
         subprocess.run(["sudo", "systemctl", "disable", SERVICE_PATH], check=True)
     except subprocess.CalledProcessError as e:
@@ -33,7 +33,7 @@ def daemon_disable(args, kwargs, flags):
         return
     yield "Daemon disabled", 0
 
-def daemon_stop(args, kwargs, flags):
+def daemon_stop(args, flags, kwargs):
     try:
         subprocess.run(["systemctl", "stop", SERVICE_PATH], check=True)
     except subprocess.CalledProcessError as e:
@@ -41,10 +41,10 @@ def daemon_stop(args, kwargs, flags):
         return
     yield "Daemon stopped", 0
 
-def daemon_restart(args, kwargs, flags):
+def daemon_restart(args, flags, kwargs):
     try:
-        yield from daemon_stop(args, kwargs, flags)
-        yield from daemon_start(args, kwargs, flags)
+        yield from daemon_stop(args, flags, kwargs)
+        yield from daemon_start(args, flags, kwargs)
     except subprocess.CalledProcessError as e:
         yield f"An error occurred: {e}", 1
         return
