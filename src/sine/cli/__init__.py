@@ -3,7 +3,7 @@ import sys
 import halo
 
 from .utils.resolve import resolve_callback
-from .constants import SUPPORTED_SYSTEMS
+from ..common.constants import SUPPORTED_SYSTEMS
 from ..common import parse_afk
 
 

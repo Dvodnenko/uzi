@@ -1,7 +1,7 @@
 import shutil
 import json
 
-from ...constants import CONFIG_PATH, DEFAULT_CONFIG, generate_service, SERVICE_PATH
+from ....common.constants import CONFIG_PATH, DEFAULT_CONFIG, generate_service, SERVICE_PATH
 from ....common.config import load_config
 
 

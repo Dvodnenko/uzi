@@ -1,6 +1,6 @@
 import subprocess
 
-from ...constants import DAEMON_PID_PATH, SERVICE_PATH
+from ....common.constants import DAEMON_PID_PATH, SERVICE_PATH
 
 
 def getdpid() -> int | None:

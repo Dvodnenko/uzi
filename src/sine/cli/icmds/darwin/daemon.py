@@ -1,7 +1,7 @@
 import subprocess
 import os
 
-from ...constants import DAEMON_PID_PATH, PLIST_PATH, PLIST_LABEL
+from ....common.constants import DAEMON_PID_PATH, PLIST_PATH, PLIST_LABEL
 
 
 def getdpid() -> int | None:

@@ -2,7 +2,7 @@ import shutil
 import json
 import plistlib
 
-from ...constants import CONFIG_PATH, DEFAULT_CONFIG, generate_plist, PLIST_PATH
+from ....common.constants import CONFIG_PATH, DEFAULT_CONFIG, generate_plist, PLIST_PATH
 from ....common.config import load_config
 
 
