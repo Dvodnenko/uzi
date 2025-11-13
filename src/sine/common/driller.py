@@ -10,6 +10,7 @@ def drill(
     pattern: re.Pattern = None,
     conditions: list[Callable[[Any], bool]] = [lambda *args, **kwargs: True],
     default = None,
+    raise_: bool = False
 ):
     result = dict_
     if pattern:
@@ -19,6 +20,7 @@ def drill(
             result = result[p]
         if all([condition(result) for condition in conditions]):
             return result
+        elif raise_: raise KeyError(f"no such value: {path}")
         return default
     except KeyError:
         return default
