@@ -6,7 +6,7 @@ from ..entities import Session
 from ..database.funcs import get_all_by_titles, select
 from .decorators import cast_kwargs
 from .base import Service
-from ...common import load_config, parse_afk, drill
+from ...common import load_config, parse_afk, drill, CONFIG_GLOBALS
 from ...common.constants import DEFAULT_FMT
 from ..funcs import asexc
 
@@ -66,7 +66,7 @@ class SessionService(Service):
             pattern: str = drill(
                 config, ["output", "sessions", "formats", fmt], default=DEFAULT_FMT)
             for session in self.repository.get_all(sortby):
-                yield pattern.format(**session.to_dict()), 0
+                yield eval(f"f'{pattern}'", globals={**CONFIG_GLOBALS, "e": session}), 0
 
     def select(self, args: list, flags: list, **kwargs):
         sortby = kwargs.pop("sortby")
@@ -83,7 +83,7 @@ class SessionService(Service):
             pattern: str = drill(
                 config, ["output", "sessions", "formats", fmt], default=DEFAULT_FMT)
             for session in select(self.repository.session, Session, kwargs, sortby):
-                yield pattern.format(**session.to_dict()), 0
+                yield eval(f"f'{pattern}'", globals={**CONFIG_GLOBALS, "e": session}), 0
     
     def print(self, args: list, flags: list, **kwargs):
         config = load_config()
@@ -91,7 +91,7 @@ class SessionService(Service):
         pattern: str = drill(
             config, ["output", "sessions", "formats", fmt], default=DEFAULT_FMT)
         for session in get_all_by_titles(self.repository.session, Session, args):
-            yield pattern.format(**session.to_dict()), 0
+            yield eval(f"f'{pattern}'", globals={**CONFIG_GLOBALS, "e": session}), 0
     
     @cast_kwargs(Session)
     def update(self, args: list, flags: list, **kwargs):

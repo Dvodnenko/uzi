@@ -3,7 +3,7 @@ from ..entities import Folder
 from ..database.funcs import get_all_by_titles, select
 from .decorators import cast_kwargs
 from .base import Service
-from ...common import load_config, parse_afk, drill
+from ...common import load_config, parse_afk, drill, CONFIG_GLOBALS
 from ...common.constants import DEFAULT_FMT
 from ..funcs import asexc
 
@@ -48,7 +48,7 @@ class FolderService(Service):
             pattern: str = drill(
                 config, ["output", "folders", "formats", fmt], default=DEFAULT_FMT)
             for folder in self.repository.get_all(sortby):
-                yield pattern.format(**folder.to_dict()), 0
+                yield eval(f"f'{pattern}'", globals={**CONFIG_GLOBALS, "e": folder}), 0
 
     def select(self, args: list, flags: list, **kwargs):
         sortby = kwargs.pop("sortby", "title")
@@ -61,7 +61,7 @@ class FolderService(Service):
             pattern: str = drill(
                 config, ["output", "folders", "formats", fmt], default=DEFAULT_FMT)
             for folder in select(self.repository.session, Folder, kwargs, sortby):
-                yield pattern.format(**folder.to_dict()), 0
+                yield eval(f"f'{pattern}'", globals={**CONFIG_GLOBALS, "e": folder}), 0
     
     def print(self, args: list, flags: list, **kwargs):
         config = load_config()
@@ -69,7 +69,7 @@ class FolderService(Service):
         pattern: str = drill(
             config, ["output", "folders", "formats", fmt], default=DEFAULT_FMT)
         for folder in get_all_by_titles(self.repository.session, Folder, args):
-            yield pattern.format(**folder.to_dict()), 0
+            yield eval(f"f'{pattern}'", globals={**CONFIG_GLOBALS, "e": folder}), 0
 
     @cast_kwargs(Folder)
     def update(self, args: list, flags: list, **kwargs):

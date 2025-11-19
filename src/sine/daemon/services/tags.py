@@ -4,7 +4,7 @@ from ..entities import Tag
 from ..database.funcs import get_all_by_titles, select
 from .decorators import cast_kwargs
 from .base import Service
-from ...common import load_config, parse_afk, drill
+from ...common import load_config, parse_afk, drill, CONFIG_GLOBALS
 from ...common.constants import DEFAULT_FMT
 from ..funcs import asexc
 
@@ -49,7 +49,7 @@ class TagService(Service):
             pattern: str = drill(
                 config, ["output", "tags", "formats", fmt], default=DEFAULT_FMT)
             for tag in self.repository.get_all(sortby):
-                yield pattern.format(**tag.to_dict()), 0
+                yield eval(f"f'{pattern}'", globals={**CONFIG_GLOBALS, "e": tag}), 0
 
     def select(self, args: list, flags: list, **kwargs):
         sortby = kwargs.pop("sortby", "title")
@@ -62,7 +62,7 @@ class TagService(Service):
             pattern: str = drill(
                 config, ["output", "tags", "formats", fmt], default=DEFAULT_FMT)
             for tag in select(self.repository.session, Tag, kwargs, sortby):
-                yield pattern.format(**tag.to_dict()), 0
+                yield eval(f"f'{pattern}'", globals={**CONFIG_GLOBALS, "e": tag}), 0
     
     def print(self, args: list, flags: list, **kwargs):
         config = load_config()
@@ -70,7 +70,7 @@ class TagService(Service):
         pattern: str = drill(
             config, ["output", "tags", "formats", fmt], default=DEFAULT_FMT)
         for tag in get_all_by_titles(self.repository.session, Tag, args):
-            yield pattern.format(**tag.to_dict()), 0
+            yield eval(f"f'{pattern}'", globals={**CONFIG_GLOBALS, "e": tag}), 0
     
     @cast_kwargs(Tag)
     def update(self, args: list, flags: list, **kwargs):

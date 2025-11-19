@@ -58,4 +58,4 @@ WantedBy=multi-user.target
 
 ## Default values
 
-DEFAULT_FMT = "* \033[{color}m{title}\033[0m"
+DEFAULT_FMT = "* \033[{e.color}m{e.title}\033[0m"
