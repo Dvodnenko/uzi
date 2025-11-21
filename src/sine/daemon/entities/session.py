@@ -8,7 +8,7 @@ from .entity import Entity
 class Session(Entity):
     start: datetime
     summary: str = ""
-    end: datetime | None = field(default=None, kw_only=True)
+    end: datetime = field(default=None, kw_only=True)
 
     @property
     def is_active(self) -> bool:
