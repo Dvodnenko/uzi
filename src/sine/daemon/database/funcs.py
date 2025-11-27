@@ -23,8 +23,11 @@ OPERATORS = {
     "ge": lambda col, val: col >= val,
     "le": lambda col, val: col <= val,
     "contains": lambda col, val: col.like(f"%{val}%"),
+    "notcontains": lambda col, val: col.notlike(f"%{val}%"),
     "icontains": lambda col, val: col.ilike(f"%{val}%"),
+    "noticontains": lambda col, val: col.notilike(f"%{val}%"),
     "in": lambda col, val: col.in_(val if isinstance(val, list) else [val]),
+    "notin": lambda col, val: col.notin_(val if isinstance(val, list) else [val]),
 }
 
 def apply_filters(query, model, filters: dict):
