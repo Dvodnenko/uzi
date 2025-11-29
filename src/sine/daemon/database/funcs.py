@@ -38,10 +38,10 @@ def apply_filters(query, model, filters: dict):
     for key, value in filters.items():
         if "__" in key:
             field, op = key.split("__", 1)
-            if allowed[field].type is datetime:
-                value = cast_datetime(value)
             if not hasattr(model, field):
                 continue
+            if allowed[field].type is datetime:
+                value = cast_datetime(value)
             column = getattr(model, field)
             if op in OPERATORS:
                 expr = OPERATORS[op](column, value)
