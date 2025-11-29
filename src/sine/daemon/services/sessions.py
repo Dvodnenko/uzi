@@ -30,6 +30,8 @@ class SessionService(Service):
     @cast_kwargs(Session)
     def begin(self, rspd: dict):
         _, _, kwargs = rspd["ps"]["afk"]
+        if not kwargs.get("styles") and kwargs.get("parent"):
+            kwargs["styles"] = kwargs["parent"].styles
         active = next(self.repository.get_active())
         if active:
             yield f"Session is already started: '{active.title}'", 1

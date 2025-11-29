@@ -26,6 +26,8 @@ class FolderService(Service):
     @cast_kwargs(Folder)
     def create(self, rspd: dict):
         _, _, kwargs = rspd["ps"]["afk"]
+        if not kwargs.get("styles") and kwargs.get("parent"):
+            kwargs["styles"] = kwargs["parent"].styles
         folder = Folder(**kwargs)
         if next(self.repository.get(folder.title)):
             yield f"Folder already exists: {folder.title}", 1

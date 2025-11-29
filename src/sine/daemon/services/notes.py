@@ -27,6 +27,8 @@ class NoteService(Service):
     @cast_kwargs(Note)
     def create(self, rspd: dict):
         _, _, kwargs = rspd["ps"]["afk"]
+        if not kwargs.get("styles") and kwargs.get("parent"):
+            kwargs["styles"] = kwargs["parent"].styles
         note = Note(**kwargs)
         if next(self.repository.get(note.title)):
             yield f"Note already exists: {note.title}", 1

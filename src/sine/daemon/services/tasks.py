@@ -27,6 +27,8 @@ class TaskService(Service):
     @cast_kwargs(Task)
     def create(self, rspd: dict):
         _, _, kwargs = rspd["ps"]["afk"]
+        if not kwargs.get("styles") and kwargs.get("parent"):
+            kwargs["styles"] = kwargs["parent"].styles
         task = Task(**kwargs)
         if next(self.repository.get(task.title)):
             yield f"Task already exists: {task.title}", 1

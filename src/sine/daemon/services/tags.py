@@ -28,6 +28,8 @@ class TagService(Service):
     @cast_kwargs(Tag)
     def create(self, rspd: dict):
         _, _, kwargs = rspd["ps"]["afk"]
+        if not kwargs.get("styles") and kwargs.get("parent"):
+            kwargs["styles"] = kwargs["parent"].styles
         tag = Tag(**kwargs)
         if next(self.repository.get(tag.title)):
             yield f"Tag already exists: {tag.title}", 1
